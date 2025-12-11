@@ -21,6 +21,7 @@ class PermissionSeeder extends Seeder
             'view-account',
             'create-account',
             'update-account',
+            'view-portfolio-balance',
             'create-transaction',
         ];
 

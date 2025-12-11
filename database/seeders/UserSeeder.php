@@ -21,21 +21,18 @@ class UserSeeder extends Seeder
                 'name' => 'Admin Account',
                 'email' => 'admin@gmail.com',
                 'password' => 'password',
-                'email_verified_at' => now(),
             ],
             [
                 'reference_number' => 'US-000002',
                 'name' => 'Customer Account',
                 'email' => 'customer@gmail.com',
                 'password' => 'password',
-                'email_verified_at' => now(),
             ],
             [
                 'reference_number' => 'US-000003',
                 'name' => 'Staff Account',
                 'email' => 'staff@gmail.com',
                 'password' => 'password',
-                'email_verified_at' => now(),
             ]
         ];
 
@@ -46,6 +43,7 @@ class UserSeeder extends Seeder
                 [
                     'name'     => $userData['name'],
                     'password' => Hash::make($userData['password']),
+                    'email_verified_at' => now(),
                 ]
             );
             $this->command->info("\t ✓ User seeded successfully.");
