@@ -5,6 +5,7 @@ namespace App\Domains\Transaction\Http\Controllers;
 use App\Domains\Transaction\Data\TransactionCreateData;
 use App\Domains\Transaction\Http\Requests\StoreTransactionRequest;
 use App\Domains\Transaction\Http\Resources\TransactionResource;
+use App\Domains\Transaction\Models\Transaction;
 use App\Domains\Transaction\Services\TransactionService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -25,5 +26,15 @@ class TransactionController extends Controller
             data: new TransactionResource($transaction),
             msg: 'Transaction has been processed successfully'
         );
+    }
+
+    public function index(): JsonResponse
+    {
+        return self::Success(data: TransactionResource::collection(Transaction::all()));
+    }
+
+    public function show(Transaction $transaction): JsonResponse
+    {
+        return self::Success(data: new TransactionResource($transaction));
     }
 }

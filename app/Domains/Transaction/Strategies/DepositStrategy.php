@@ -25,7 +25,7 @@ class DepositStrategy implements TransactionStrategy
 
         return $this->transactions->create([
             'account_id'        => $account->id,
-            'related_account_id'=> null,
+            'related_account_reference'=> null,
             'type'              => $data->type->value,
             'status'            => TransactionStatusEnum::COMPLETED->value,
             'amount'            => $data->amount,

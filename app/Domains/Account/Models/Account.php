@@ -20,6 +20,7 @@ class Account extends Model
     protected $fillable = [
         'reference_number',
         'user_id',
+        'name',
         'type',
         'parent_id',
         'state',
@@ -57,9 +58,14 @@ class Account extends Model
         return $this->belongsTo(Account::class, 'parent_id');
     }
 
-    public function children(): HasMany
+    public function children()
     {
         return $this->hasMany(Account::class, 'parent_id');
+    }
+
+    public function childrenRecursive()
+    {
+        return $this->children()->with('childrenRecursive');
     }
 
     public function transactions(): HasMany
@@ -99,7 +105,7 @@ class Account extends Model
 
     protected function getCodePrefix(): string
     {
-        return 'AC-';
+        return 'ACC-';
     }
 
     protected function getCodePadding(): int

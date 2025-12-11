@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('reference_number')->unique()->nullable()->index();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('name');
             $table->enum('type',array_column(AccountTypeEnum::cases(), 'value')); // saving, current, loan, investment
             $table->foreignId('parent_id')->nullable()->constrained('accounts')->nullOnDelete();
             $table->enum('state',array_column(AccountStateEnum::cases(), 'value'))->default('active'); // active, frozen, suspended, closed

@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
-class AccountantController extends Controller
+class AccountController extends Controller
 {
     public function __construct(
         private readonly AccountService $service
@@ -33,7 +33,7 @@ class AccountantController extends Controller
 
     public function myAccounts(Request $request): JsonResponse
     {
-        $accounts = auth()->user()->accounts;
+        $accounts = $this->service->getMyAccounts();
 
         return self::Success(data: AccountResource::collection($accounts));
     }

@@ -11,6 +11,10 @@ interface AccountRepositoryInterface
 
     public function findOrFail(int $id): Account;
 
+    public function findByReference(string $reference): ?Account;
+
+    public function findByReferenceOrFail(string $reference): Account;
+
     public function findByUser(int $userId): Collection;
 
     public function create(array $data): Account;

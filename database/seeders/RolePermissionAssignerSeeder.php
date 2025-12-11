@@ -34,6 +34,8 @@ class RolePermissionAssignerSeeder extends Seeder
                 'view-portfolio-balance',
                 'view-account',
                 'create-transaction',
+                'view-transactions',
+                'view-transaction'
             ],
             'staff' => [
                 'login',

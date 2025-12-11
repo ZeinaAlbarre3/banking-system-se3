@@ -51,7 +51,7 @@ class AccountServiceProvider extends ServiceProvider
      */
     protected function registerRoutes(): void
     {
-        Route::prefix('api/v1/accountants')
+        Route::prefix('api/v1/accounts')
              ->middleware('api')
              ->group(__DIR__.'/Routes/api.php');
     }

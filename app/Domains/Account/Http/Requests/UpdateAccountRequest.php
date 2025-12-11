@@ -16,8 +16,9 @@ class UpdateAccountRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'name'      => ['sometimes', 'string','max:255'],
             'type'      => ['sometimes', Rule::enum(AccountTypeEnum::class)],
-            'parent_id' => ['sometimes', 'nullable', 'integer', 'exists:accounts,id'],
+            'parent_reference' => ['sometimes', 'nullable', 'string', 'exists:accounts,reference_number'],
             'metadata'  => ['sometimes', 'nullable', 'array'],
         ];
     }

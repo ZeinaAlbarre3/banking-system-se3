@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->string('reference_number')->unique();
+            $table->string('reference_number')->unique()->nullable()->index();
             $table->foreignId('account_id')->constrained('accounts')->cascadeOnDelete();
             $table->foreignId('related_account_id')->nullable()->constrained('accounts')->nullOnDelete();
             $table->enum('type',array_column(TransactionTypeEnum::cases(), 'value'));

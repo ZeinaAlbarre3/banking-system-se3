@@ -22,11 +22,12 @@ class TransactionService
 
     public function create(TransactionCreateData $data): Transaction
     {
-        $account = $this->accounts->findOrFail($data->account_id);
+        $account = $this->accounts->findByReferenceOrFail($data->account_reference);
+
         $relatedAccount = null;
 
-        if ($data->related_account_id !== null) {
-            $relatedAccount = $this->accounts->findOrFail($data->related_account_id);
+        if ($data->related_account_reference !== null) {
+            $relatedAccount = $this->accounts->findByReferenceOrFail($data->related_account_reference);
         }
 
         $this->forTransferRule

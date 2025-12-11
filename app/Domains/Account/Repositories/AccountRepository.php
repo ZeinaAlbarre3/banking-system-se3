@@ -16,6 +16,19 @@ class AccountRepository implements AccountRepositoryInterface
     {
         return Account::query()->findOrFail($id);
     }
+    public function findByReference(string $reference): ?Account
+    {
+        return Account::query()
+            ->where('reference_number', $reference)
+            ->first();
+    }
+
+    public function findByReferenceOrFail(string $reference): Account
+    {
+        return Account::query()
+            ->where('reference_number', $reference)
+            ->firstOrFail();
+    }
     public function findByUser(int $userId): Collection
     {
         return Account::query()->where('user_id', $userId)->get();

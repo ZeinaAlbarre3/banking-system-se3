@@ -9,9 +9,9 @@ class TransactionCreateData extends Data
 {
     public function __construct(
         public TransactionTypeEnum $type,
-        public int $account_id,
+        public string $account_reference,
         public float $amount,
-        public ?int $related_account_id,
+        public ?string $related_account_reference,
         public ?string $currency,
         public ?array $metadata,
     ) {}

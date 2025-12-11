@@ -24,9 +24,9 @@ class StoreTransactionRequest extends FormRequest
     {
         return [
             'type' => ['required', Rule::enum(TransactionTypeEnum::class)],
-            'account_id' => ['required', 'integer', 'exists:accounts,id',],
+            'account_reference' => ['required', 'string', 'exists:accounts,reference_number',],
             'amount' => ['required', 'numeric', 'min:0.01',],
-            'related_account_id' => ['nullable', 'integer', 'exists:accounts,id', 'different:account_id',],
+            'related_account_reference' => ['nullable', 'string','required_if:type,' . TransactionTypeEnum::TRANSFER->value,'exists:accounts,reference_number', 'different:account_reference',],
             'currency' => ['nullable', 'string', 'size:3',],
             'metadata' => ['nullable', 'array',],
         ];

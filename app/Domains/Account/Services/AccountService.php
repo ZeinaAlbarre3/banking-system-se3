@@ -15,6 +15,8 @@ use App\Domains\Account\Rules\EnsureNotSelfParentRule;
 use App\Domains\Account\Rules\EnsureSameOwnerRule;
 use App\Domains\Account\States\AccountStateFactory;
 use App\Domains\Auth\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class AccountService
 {
@@ -28,20 +30,25 @@ class AccountService
 
     public function create(AccountCreateData $data): Account
     {
-        $parent = $this->getParentIfProvided($data->parent_id);
+        $parent = null;
+
+        if ($data->parent_reference) {
+            $parent = $this->accounts->findByReference($data->parent_reference);
+        }
 
         if ($parent) {
             $fakeChild = new Account([
-                'user_id' => $data->user_id,
+                'user_id' => Auth::id()
             ]);
 
             $this->sameOwnerRule->validate($fakeChild, $parent);
         }
 
         $account = $this->accounts->create([
-            'user_id'   => $data->user_id,
+            'user_id'   => Auth::id(),
+            'name'      => $data->name,
             'type'      => $data->type,
-            'parent_id' => $data->parent_id,
+            'parent_id' => $parent?->id,
             'state'     => AccountStateEnum::ACTIVE->value,
             'balance'   => 0,
             'metadata'  => $data->metadata ?? [],
@@ -54,16 +61,26 @@ class AccountService
     {
         $payload = $data->toFilteredArray();
 
-        $parent = $this->getParentIfProvided($payload['parent_id'] ?? null);
+        if ($data->parent_reference !== null) {
+            $parent = $this->accounts->findByReferenceOrFail($data->parent_reference);
 
-        if ($parent) {
             $this->sameOwnerRule->validate($account, $parent);
             $this->notSelfParentRule->validate($account, $parent);
+
+            $payload['parent_id'] = $parent->id;
         }
 
-        $updated = $this->accounts->update($account, $payload);
+        return $this->accounts->update($account, $payload);
+    }
 
-        return $updated;
+    public function getMyAccounts()
+    {
+        $user = auth()->user();
+
+         return $user->accounts()
+            ->whereNull('parent_id')
+            ->with('childrenRecursive')
+            ->get();
     }
 
     public function changeState(Account $account, AccountStateChangeData $data): Account

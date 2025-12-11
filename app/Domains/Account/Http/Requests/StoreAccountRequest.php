@@ -16,8 +16,9 @@ class StoreAccountRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'name' => ['required', 'string', 'max:255'],
             'type'      => ['required',Rule::enum(AccountTypeEnum::class)],
-            'parent_id' => ['nullable', 'integer', 'exists:accounts,id'],
+            'parent_reference' => ['nullable', 'string', 'exists:accounts,reference_number'],
             'metadata'  => ['nullable', 'array'],
         ];
     }
