@@ -81,3 +81,4 @@ function handleCustomException(CustomException $e): JsonResponse
 {
     return ExceptionResponder::Error([],$e->getMessage(), $e->getStatusCode());
 }
+

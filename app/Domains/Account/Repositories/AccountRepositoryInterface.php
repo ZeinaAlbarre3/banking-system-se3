@@ -7,6 +7,10 @@ use Illuminate\Support\Collection;
 
 interface AccountRepositoryInterface
 {
+    public function find(int $id): ?Account;
+
+    public function findOrFail(int $id): Account;
+
     public function findByUser(int $userId): Collection;
 
     public function create(array $data): Account;

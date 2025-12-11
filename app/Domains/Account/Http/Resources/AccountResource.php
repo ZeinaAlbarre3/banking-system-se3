@@ -9,8 +9,7 @@ class AccountResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,
-            'user_id' => $this->user_id,
+            'reference_number' => $this->reference_number,
             'type' => $this->type,
             'state' => $this->state,
             'balance' => (float)$this->balance,

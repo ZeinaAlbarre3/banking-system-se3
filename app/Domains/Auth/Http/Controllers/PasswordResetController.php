@@ -19,16 +19,12 @@ use Random\RandomException;
 
 class PasswordResetController extends Controller
 {
-    use ResponseTrait;
     public function __construct(
         protected SendOtpAction        $sendOtpAction,
         protected PasswordResetService $passwordResetService,
         protected VerificationService $verificationService,
     ){}
 
-    /**
-     * @throws RandomException
-     */
     public function sendOtp(ForgotPasswordRequest $request): JsonResponse
     {
         $this->sendOtpAction->execute($request->input('email'),OtpActionTypeEnum::RESET->value);
@@ -36,9 +32,6 @@ class PasswordResetController extends Controller
         return self::Success(msg: 'Otp sent successfully to your email.');
     }
 
-    /**
-     * @throws ValidationException
-     */
     public function verifyResetOtp(VerifyOtpRequest $request): JsonResponse
     {
         $resetToken = $this->verificationService->verifyResetOtp($request->validated());

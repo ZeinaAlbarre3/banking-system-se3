@@ -4,28 +4,29 @@ namespace App\Domains\Account\Services;
 
 use App\Domains\Account\Composites\AccountTreeBuilder;
 use App\Domains\Account\Data\AccountCreateData;
-use App\Domains\Account\Data\AccountData;
 use App\Domains\Account\Data\AccountStateChangeData;
 use App\Domains\Account\Data\AccountUpdateData;
 use App\Domains\Account\Enums\AccountStateEnum;
+use App\Domains\Account\Exceptions\AccountStateException;
 use App\Domains\Account\Models\Account;
 use App\Domains\Account\Repositories\AccountRepositoryInterface;
+use App\Domains\Account\Rules\EnsureAccountCanBeClosedRule;
 use App\Domains\Account\Rules\EnsureNotSelfParentRule;
 use App\Domains\Account\Rules\EnsureSameOwnerRule;
 use App\Domains\Account\States\AccountStateFactory;
 use App\Domains\Auth\Models\User;
-use Illuminate\Validation\ValidationException;
 
 class AccountService
 {
     public function __construct(
-        private AccountRepositoryInterface   $accounts,
-        private AccountTreeBuilder           $treeBuilder,
-        private EnsureSameOwnerRule          $sameOwnerRule,
-        private EnsureNotSelfParentRule      $notSelfParentRule,
+        private readonly AccountRepositoryInterface   $accounts,
+        private readonly AccountTreeBuilder           $treeBuilder,
+        private readonly EnsureSameOwnerRule          $sameOwnerRule,
+        private readonly EnsureNotSelfParentRule      $notSelfParentRule,
+        private readonly EnsureAccountCanBeClosedRule $canBeClosedRule,
     ) {}
 
-    public function create(AccountCreateData $data): AccountData
+    public function create(AccountCreateData $data): Account
     {
         $parent = $this->getParentIfProvided($data->parent_id);
 
@@ -46,10 +47,10 @@ class AccountService
             'metadata'  => $data->metadata ?? [],
         ]);
 
-        return AccountData::fromModel($account);
+        return $account;
     }
 
-    public function update(Account $account, AccountUpdateData $data): AccountData
+    public function update(Account $account, AccountUpdateData $data): Account
     {
         $payload = $data->toFilteredArray();
 
@@ -62,10 +63,10 @@ class AccountService
 
         $updated = $this->accounts->update($account, $payload);
 
-        return AccountData::fromModel($updated);
+        return $updated;
     }
 
-    public function changeState(Account $account, AccountStateChangeData $data): AccountData
+    public function changeState(Account $account, AccountStateChangeData $data): Account
     {
         if ($data->state === AccountStateEnum::CLOSED->value) {
             $this->canBeClosedRule->validate($account);
@@ -74,7 +75,7 @@ class AccountService
         $account->state = $data->state;
         $account->save();
 
-        return AccountData::fromModel($account);
+        return $account;
     }
 
     public function getUserPortfolioBalance(User $user): float
@@ -86,16 +87,45 @@ class AccountService
 
     public function ensureCanWithdraw(Account $account): void
     {
-        $state = AccountStateFactory::fromAccount($account);
+        $this->ensureOperationAllowed(
+            account: $account,
+            operation: 'withdraw',
+            errorMessage: 'This account is not allowed to withdraw in its current state.'
+        );
     }
+
     public function ensureCanDeposit(Account $account): void
     {
-        $state = AccountStateFactory::fromAccount($account);
+        $this->ensureOperationAllowed(
+            account: $account,
+            operation: 'deposit',
+            errorMessage: 'This account is not allowed to deposit in its current state.'
+        );
     }
 
     public function ensureCanTransfer(Account $account): void
     {
+        $this->ensureOperationAllowed(
+            account: $account,
+            operation: 'transfer',
+            errorMessage: 'This account is not allowed to transfer in its current state.'
+        );
+    }
+
+    private function ensureOperationAllowed(Account $account, string $operation, string $errorMessage): void
+    {
         $state = AccountStateFactory::fromAccount($account);
+
+        $allowed = match ($operation) {
+            'withdraw' => $state->canWithdraw($account),
+            'deposit'  => $state->canDeposit($account),
+            'transfer' => $state->canTransfer($account),
+            default    => false,
+        };
+
+        if (! $allowed) {
+            throw new AccountStateException($errorMessage);
+        }
     }
 
 

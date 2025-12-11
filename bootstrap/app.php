@@ -2,6 +2,7 @@
 
 use App\Domains\Account\AccountServiceProvider;
 use App\Domains\Auth\AuthServiceProvider;
+use App\Domains\Transaction\TransactionServiceProvider;
 use App\Exceptions\ExceptionHandler;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -26,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withProviders([
         AuthServiceProvider::class,
-        AccountServiceProvider::class
+        AccountServiceProvider::class,
+        TransactionServiceProvider::class,
     ])
     ->create();

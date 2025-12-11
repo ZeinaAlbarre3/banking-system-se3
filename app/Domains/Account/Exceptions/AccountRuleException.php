@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Domains\Account\Exceptions;
+
+use App\Exceptions\Types\CustomException;
+
+class AccountRuleException extends CustomException
+{
+    public function __construct(string $message)
+    {
+        parent::__construct($message, 422);
+    }
+}

@@ -7,6 +7,15 @@ use Illuminate\Support\Collection;
 
 class AccountRepository implements AccountRepositoryInterface
 {
+    public function find(int $id): ?Account
+    {
+        return Account::query()->find($id);
+    }
+
+    public function findOrFail(int $id): Account
+    {
+        return Account::query()->findOrFail($id);
+    }
     public function findByUser(int $userId): Collection
     {
         return Account::query()->where('user_id', $userId)->get();

@@ -15,7 +15,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable ,HasApiTokens , SoftDeletes , HasRoles, HasUniqueCode;
 
     protected $guard_name = 'web';
@@ -27,6 +27,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'reference_number',
         'name',
         'email',
         'password',
@@ -64,11 +65,6 @@ class User extends Authenticatable
         return $this->hasMany(Account::class);
     }
 
-    protected function getCodeColumn(): string
-    {
-        return 'reference_number';
-    }
-
     protected function getCodePrefix(): string
     {
         return 'US-';
@@ -84,6 +80,9 @@ class User extends Authenticatable
         return 'reference_number';
     }
 
-
+    protected function getCodeColumn(): string
+    {
+        return 'reference_number';
+    }
 
 }

@@ -2,8 +2,8 @@
 
 namespace App\Domains\Account\Rules;
 
+use App\Domains\Account\Exceptions\AccountRuleException;
 use App\Domains\Account\Models\Account;
-use Illuminate\Validation\ValidationException;
 
 class EnsureSameOwnerRule implements AccountRule
 {
@@ -14,9 +14,7 @@ class EnsureSameOwnerRule implements AccountRule
         }
 
         if ($account->user_id !== $relatedAccount->user_id) {
-            throw ValidationException::withMessages([
-                'parent_id' => 'Parent account must belong to the same user.',
-            ]);
+            throw new AccountRuleException('Parent account must belong to the same user.');
         }
     }
 }

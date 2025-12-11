@@ -23,7 +23,6 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    use ResponseTrait;
     public function __construct(
         protected UserRepository       $userRepository,
         protected SendOtpAction        $sendOtpAction,

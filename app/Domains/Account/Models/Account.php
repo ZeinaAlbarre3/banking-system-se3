@@ -6,6 +6,7 @@ use App\Domains\Account\Enums\AccountStateEnum;
 use App\Domains\Account\Enums\AccountTypeEnum;
 use App\Domains\Account\ValueObjects\Money;
 use App\Domains\Auth\Models\User;
+use App\Domains\Transaction\Models\Transaction;
 use App\Traits\HasUniqueCode;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,6 +18,7 @@ class Account extends Model
 
     protected $table = 'accounts';
     protected $fillable = [
+        'reference_number',
         'user_id',
         'type',
         'parent_id',
@@ -58,6 +60,21 @@ class Account extends Model
     public function children(): HasMany
     {
         return $this->hasMany(Account::class, 'parent_id');
+    }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class, 'account_id');
+    }
+
+    public function incomingTransactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class, 'related_account_id');
+    }
+
+    public function allTransactions()
+    {
+        return Transaction::query()->where('account_id', $this->id)->orWhere('related_account_id', $this->id);
     }
 
     public function isActive(): bool

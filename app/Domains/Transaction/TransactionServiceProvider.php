@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Account;
+namespace App\Domains\Transaction;
 
 use App\Domains\Account\Composites\AccountTreeBuilder;
 use App\Domains\Account\Models\Account;
@@ -10,12 +10,15 @@ use App\Domains\Account\Repositories\AccountRepositoryInterface;
 use App\Domains\Account\Rules\EnsureAccountCanBeClosedRule;
 use App\Domains\Account\Rules\EnsureNotSelfParentRule;
 use App\Domains\Account\Rules\EnsureSameOwnerRule;
+use App\Domains\Transaction\Models\Transaction;
+use App\Domains\Transaction\Repositories\TransactionRepository;
+use App\Domains\Transaction\Repositories\TransactionRepositoryInterface;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 
-class AccountServiceProvider extends ServiceProvider
+class TransactionServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -23,14 +26,9 @@ class AccountServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(
-            AccountRepositoryInterface::class,
-            AccountRepository::class
+            TransactionRepositoryInterface::class,
+            TransactionRepository::class
         );
-
-        $this->app->singleton(AccountTreeBuilder::class, fn () => new AccountTreeBuilder());
-        $this->app->singleton(EnsureSameOwnerRule::class, fn () => new EnsureSameOwnerRule());
-        $this->app->singleton(EnsureNotSelfParentRule::class, fn () => new EnsureNotSelfParentRule());
-        $this->app->singleton(EnsureAccountCanBeClosedRule::class, fn () => new EnsureAccountCanBeClosedRule());
     }
 
     /**
@@ -42,7 +40,7 @@ class AccountServiceProvider extends ServiceProvider
 
         $this->registerRoutes();
 
-        Gate::policy(Account::class, AccountPolicy::class);
+        //Gate::policy(Transaction::class, TransactionPolicy::class);
 
     }
 
@@ -51,7 +49,7 @@ class AccountServiceProvider extends ServiceProvider
      */
     protected function registerRoutes(): void
     {
-        Route::prefix('api/v1/accountants')
+        Route::prefix('api/v1/transactions')
              ->middleware('api')
              ->group(__DIR__.'/Routes/api.php');
     }

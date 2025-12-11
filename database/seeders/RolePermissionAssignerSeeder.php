@@ -28,8 +28,12 @@ class RolePermissionAssignerSeeder extends Seeder
                 'register',
                 'login',
                 'logout',
+                'create-account',
+                'update-account',
                 'view-my-accounts',
+                'view-portfolio-balance',
                 'view-account',
+                'create-transaction',
             ],
             'staff' => [
                 'login',
