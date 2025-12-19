@@ -4,12 +4,14 @@ namespace App\Domains\Transaction\Models;
 
 use App\Domains\Account\Models\Account;
 use App\Traits\HasUniqueCode;
+use Database\Factories\TransactionFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Transaction extends Model
 {
-    use HasUniqueCode;
+    use HasUniqueCode,HasFactory;
     protected $fillable = [
         'reference_number',
         'account_id',
@@ -29,6 +31,11 @@ class Transaction extends Model
         'processed_at'  => 'datetime',
         'amount'        => 'float',
     ];
+
+    protected static function newFactory()
+    {
+        return TransactionFactory::new();
+    }
 
     public function account(): BelongsTo
     {

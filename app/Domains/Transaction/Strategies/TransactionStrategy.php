@@ -8,5 +8,5 @@ use App\Domains\Transaction\Models\Transaction;
 
 interface TransactionStrategy
 {
-    public function execute(Account $account, TransactionCreateData $data, ?Account $relatedAccount = null): Transaction;
+    public function apply(Account $account, TransactionCreateData $data, ?Account $relatedAccount = null): void;
 }

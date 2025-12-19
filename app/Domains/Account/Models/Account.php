@@ -8,13 +8,15 @@ use App\Domains\Account\ValueObjects\Money;
 use App\Domains\Auth\Models\User;
 use App\Domains\Transaction\Models\Transaction;
 use App\Traits\HasUniqueCode;
+use Database\Factories\AccountFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Account extends Model
 {
-    use HasUniqueCode;
+    use HasUniqueCode,HasFactory;
 
     protected $table = 'accounts';
     protected $fillable = [
@@ -32,6 +34,11 @@ class Account extends Model
         'metadata' => 'array',
         'balance'  => 'decimal:2',
     ];
+
+    protected static function newFactory()
+    {
+        return AccountFactory::new();
+    }
 
     public function getTypeEnum(): ?AccountTypeEnum
     {
@@ -90,7 +97,7 @@ class Account extends Model
 
     public function canBeClosed(): bool
     {
-        return (float) $this->balance === 0.0;
+        return (float) $this->getRawOriginal('balance') === 0.0;
     }
 
     public function balanceValue(): Money

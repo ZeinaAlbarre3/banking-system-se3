@@ -24,7 +24,9 @@ class PermissionSeeder extends Seeder
             'view-portfolio-balance',
             'create-transaction',
             'view-transactions',
-            'view-transaction'
+            'view-transaction',
+            'approve-transaction',
+            'reject-transaction',
         ];
 
         $totalPermissionsCount = count($permissions);

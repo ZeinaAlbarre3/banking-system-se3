@@ -3,6 +3,7 @@
 namespace App\Domains\Transaction\Http\Controllers;
 
 use App\Domains\Transaction\Data\TransactionCreateData;
+use App\Domains\Transaction\Http\Requests\RejectTransactionRequest;
 use App\Domains\Transaction\Http\Requests\StoreTransactionRequest;
 use App\Domains\Transaction\Http\Resources\TransactionResource;
 use App\Domains\Transaction\Models\Transaction;
@@ -36,5 +37,17 @@ class TransactionController extends Controller
     public function show(Transaction $transaction): JsonResponse
     {
         return self::Success(data: new TransactionResource($transaction));
+    }
+
+    public function approve(Transaction $transaction): JsonResponse
+    {
+        $this->service->approve($transaction);
+        return self::Success(msg: 'Transaction has been approved successfully');
+    }
+
+    public function reject(RejectTransactionRequest $request, Transaction $transaction): JsonResponse
+    {
+        $this->service->reject($transaction, $request->input('reason'));
+        return self::Success(msg: 'Transaction has been rejected successfully');
     }
 }

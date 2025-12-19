@@ -33,6 +33,12 @@ class UserSeeder extends Seeder
                 'name' => 'Staff Account',
                 'email' => 'staff@gmail.com',
                 'password' => 'password',
+            ],
+            [
+                'reference_number' => 'US-000004',
+                'name' => 'Manager Account',
+                'email' => 'manager@gmail.com',
+                'password' => 'password',
             ]
         ];
 

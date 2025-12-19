@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Symfony\Component\Mailer\Exception\TransportException;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mime\Exception\RfcComplianceException;
-use App\Helper\ExceptionResponder;
+use App\Helpers\ExceptionResponder;
 
 
 function handleModelNotFoundException(ModelNotFoundException $e): JsonResponse

@@ -23,6 +23,18 @@ class RolePermissionAssignerSeeder extends Seeder
                 'update-account',
                 'view-account',
                 'view-accounts',
+                'approve-transaction',
+                'reject-transaction',
+            ],
+            'manager' => [
+                'login',
+                'logout',
+                'create-account',
+                'update-account',
+                'view-account',
+                'view-accounts',
+                'approve-transaction',
+                'reject-transaction',
             ],
             'customer' => [
                 'register',
@@ -44,7 +56,8 @@ class RolePermissionAssignerSeeder extends Seeder
                 'update-account',
                 'view-account',
                 'view-accounts',
-            ]
+            ],
+
         ];
 
         $totalRoles = count($rolesWithPermissions);

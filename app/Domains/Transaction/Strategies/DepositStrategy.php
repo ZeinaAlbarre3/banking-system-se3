@@ -13,25 +13,13 @@ class DepositStrategy implements TransactionStrategy
 {
     public function __construct(
         private readonly AccountService                 $accountService,
-        private readonly TransactionRepositoryInterface $transactions
     ) {}
 
-    public function execute(Account $account, TransactionCreateData $data, ?Account $relatedAccount = null): Transaction
+    public function apply(Account $account, TransactionCreateData $data, ?Account $relatedAccount = null): void
     {
         $this->accountService->ensureCanDeposit($account);
 
         $account->balance += $data->amount;
         $account->save();
-
-        return $this->transactions->create([
-            'account_id'        => $account->id,
-            'related_account_reference'=> null,
-            'type'              => $data->type->value,
-            'status'            => TransactionStatusEnum::COMPLETED->value,
-            'amount'            => $data->amount,
-            'currency'          => $data->currency ?? 'USD',
-            'metadata'          => $data->metadata ?? [],
-            'processed_at'      => now(),
-        ]);
     }
 }

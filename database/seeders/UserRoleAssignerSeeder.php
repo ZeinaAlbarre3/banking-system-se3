@@ -18,6 +18,7 @@ class UserRoleAssignerSeeder extends Seeder
             'admin@gmail.com' => 'admin',
             'customer@gmail.com' => 'customer',
             'staff@gmail.com' => 'staff',
+            'manager@gmail.com' => 'manager',
         ];
 
         foreach ($usersWithRoles as $email => $roleName) {

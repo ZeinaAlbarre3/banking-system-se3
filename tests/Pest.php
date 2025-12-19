@@ -11,6 +11,10 @@
 |
 */
 
+use App\Domains\Auth\Models\User;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
+
 pest()->extend(Tests\TestCase::class)
  // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->in('Feature');
@@ -41,7 +45,34 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+beforeEach(function () {
+    config(['auth.defaults.guard' => 'web']);
+    config(['permission.defaults.guard_name' => 'web']);
+
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+});
+
+function givePermissions(User $user, array $perms): User
 {
-    // ..
+    $guard = 'web';
+
+    foreach ($perms as $perm) {
+        Permission::findOrCreate($perm, $guard);
+    }
+
+    $user->givePermissionTo($perms);
+
+    return $user;
+}
+
+function loginWithPerm(User $user, array $perms): User {
+    $user->assignRole('customer');
+    givePermissions($user, $perms);
+    return $user;
+}
+
+function loginAdminWithPerm(User $user, array $perms): User {
+    $user->assignRole('admin');
+    givePermissions($user, $perms);
+    return $user;
 }

@@ -15,14 +15,14 @@ abstract class AbstractTransactionChain implements TransactionChain
         return $next ?? $this;
     }
 
-    public function validate(Account $account, TransactionCreateData $data, ?Account $relatedAccount = null): void
+    public function handle(Account $account, TransactionCreateData $data, ?Account $relatedAccount = null): void
     {
-        $this->handle($account, $data, $relatedAccount);
+        $this->process($account, $data, $relatedAccount);
 
         if ($this->next) {
-            $this->next->validate($account, $data, $relatedAccount);
+            $this->next->handle($account, $data, $relatedAccount);
         }
     }
 
-    abstract protected function handle(Account $account, TransactionCreateData $data, ?Account $relatedAccount = null): void;
+    abstract public function process(Account $account, TransactionCreateData $data, ?Account $relatedAccount = null): void;
 }

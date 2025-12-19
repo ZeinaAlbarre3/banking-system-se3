@@ -18,6 +18,7 @@ class RoleSeeder extends Seeder
             'customer',
             'staff',
             'admin',
+            'manager',
         ];
 
         foreach ($defaultRoles as $roleName) {

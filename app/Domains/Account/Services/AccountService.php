@@ -85,11 +85,11 @@ class AccountService
 
     public function changeState(Account $account, AccountStateChangeData $data): Account
     {
-        if ($data->state === AccountStateEnum::CLOSED->value) {
+        if ($data->state === AccountStateEnum::CLOSED) {
             $this->canBeClosedRule->validate($account);
         }
 
-        $account->state = $data->state;
+        $account->state = $data->state->value;
         $account->save();
 
         return $account;

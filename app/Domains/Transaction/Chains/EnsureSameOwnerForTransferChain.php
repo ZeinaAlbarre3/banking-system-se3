@@ -8,9 +8,9 @@ use App\Domains\Transaction\Data\TransactionCreateData;
 use App\Domains\Transaction\Enums\TransactionTypeEnum;
 use App\Domains\Transaction\Exceptions\TransactionRuleException;
 
-class EnsureSameOwnerForTransfer extends AbstractTransactionChain
+class EnsureSameOwnerForTransferChain extends AbstractTransactionChain
 {
-    protected function handle(Account $account, TransactionCreateData $data, ?Account $relatedAccount = null): void
+    public function process(Account $account, TransactionCreateData $data, ?Account $relatedAccount = null): void
     {
         if ($data->type !== TransactionTypeEnum::TRANSFER || ! $relatedAccount) {
             return;

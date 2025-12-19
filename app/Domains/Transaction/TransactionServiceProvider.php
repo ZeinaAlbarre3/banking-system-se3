@@ -2,18 +2,12 @@
 
 namespace App\Domains\Transaction;
 
-use App\Domains\Account\Composites\AccountTreeBuilder;
-use App\Domains\Account\Models\Account;
-use App\Domains\Account\Policies\AccountPolicy;
-use App\Domains\Account\Repositories\AccountRepository;
-use App\Domains\Account\Repositories\AccountRepositoryInterface;
-use App\Domains\Account\Rules\EnsureAccountCanBeClosedRule;
-use App\Domains\Account\Rules\EnsureNotSelfParentRule;
-use App\Domains\Account\Rules\EnsureSameOwnerRule;
-use App\Domains\Transaction\Models\Transaction;
+
 use App\Domains\Transaction\Repositories\TransactionRepository;
 use App\Domains\Transaction\Repositories\TransactionRepositoryInterface;
-use Illuminate\Support\Facades\Gate;
+use App\Domains\Transaction\Chains\EnsureRelatedAccountProvidedForTransferChain;
+use App\Domains\Transaction\Chains\EnsureSameOwnerForTransferChain;
+use App\Domains\Transaction\Chains\EnsureSufficientBalanceChain;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,6 +23,10 @@ class TransactionServiceProvider extends ServiceProvider
             TransactionRepositoryInterface::class,
             TransactionRepository::class
         );
+
+        $this->app->singleton(EnsureRelatedAccountProvidedForTransferChain::class, fn () => new EnsureRelatedAccountProvidedForTransferChain());
+        $this->app->singleton(EnsureSameOwnerForTransferChain::class, fn () => new EnsureSameOwnerForTransferChain());
+        $this->app->singleton(EnsureSufficientBalanceChain::class, fn () => new EnsureSufficientBalanceChain());
     }
 
     /**

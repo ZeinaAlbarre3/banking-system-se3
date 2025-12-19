@@ -11,4 +11,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/{account}', [AccountController::class, 'show'])->middleware('permission:view-account');
     Route::put('/{account}', [AccountController::class, 'update'])->middleware('permission:update-account');
     Route::patch('/{account}/state', [AccountController::class, 'changeState'])->middleware('permission:update-account');
+    Route::get('/{account}/interest', [AccountController::class, 'interest'])->middleware('permission:view-account');
 });

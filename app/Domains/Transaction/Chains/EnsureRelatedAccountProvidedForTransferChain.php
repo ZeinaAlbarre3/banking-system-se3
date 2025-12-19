@@ -7,9 +7,9 @@ use App\Domains\Transaction\Data\TransactionCreateData;
 use App\Domains\Transaction\Enums\TransactionTypeEnum;
 use App\Domains\Transaction\Exceptions\TransactionRuleException;
 
-class EnsureRelatedAccountProvidedForTransfer extends AbstractTransactionChain
+class EnsureRelatedAccountProvidedForTransferChain extends AbstractTransactionChain
 {
-    protected function handle(Account $account, TransactionCreateData $data, ?Account $relatedAccount = null): void
+    public function process(Account $account, TransactionCreateData $data, ?Account $relatedAccount = null): void
     {
         if ($data->type !== TransactionTypeEnum::TRANSFER) {
             return;

@@ -21,6 +21,12 @@ class TransactionRepository implements TransactionRepositoryInterface
         return Transaction::query()->create($data);
     }
 
+    public function update(Transaction $transaction, array $data): Transaction
+    {
+        $transaction->update($data);
+        return $transaction->fresh();
+    }
+
     public function all(): Collection
     {
         return Transaction::query()->latest()->get();

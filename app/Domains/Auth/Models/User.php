@@ -3,11 +3,12 @@
 namespace App\Domains\Auth\Models;
 
 use App\Domains\Account\Models\Account;
+use App\Domains\Transaction\Models\AuditLog;
 use App\Traits\HasUniqueCode;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -63,6 +64,16 @@ class User extends Authenticatable
     public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
+    }
+
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(AuditLog::class, 'actor_id');
+    }
+
+    public function auditableLogs(): MorphMany
+    {
+        return $this->morphMany(AuditLog::class, 'auditable');
     }
 
     protected function getCodePrefix(): string

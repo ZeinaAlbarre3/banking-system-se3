@@ -12,7 +12,7 @@ class AccountPolicy
      */
     public function view(User $user, Account $account): bool
     {
-        if ($user->hasRole(['admin', 'employee'])) {
+        if ($user->hasRole(['admin', 'staff'])) {
             return true;
         }
 
