@@ -2,6 +2,7 @@
 
 use App\Domains\Account\AccountServiceProvider;
 use App\Domains\Auth\AuthServiceProvider;
+use App\Domains\Notification\NotificationServiceProvider;
 use App\Domains\Transaction\TransactionServiceProvider;
 use App\Exceptions\ExceptionHandler;
 use Illuminate\Foundation\Application;
@@ -29,5 +30,6 @@ return Application::configure(basePath: dirname(__DIR__))
         AuthServiceProvider::class,
         AccountServiceProvider::class,
         TransactionServiceProvider::class,
+        NotificationServiceProvider::class
     ])
     ->create();
