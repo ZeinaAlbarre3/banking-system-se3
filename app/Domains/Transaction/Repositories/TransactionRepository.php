@@ -2,6 +2,7 @@
 
 namespace App\Domains\Transaction\Repositories;
 
+use App\Domains\Notification\Models\AccountActivity;
 use App\Domains\Transaction\Models\Transaction;
 use Illuminate\Support\Collection;
 
@@ -19,6 +20,11 @@ class TransactionRepository implements TransactionRepositoryInterface
     public function create(array $data): Transaction
     {
         return Transaction::query()->create($data);
+    }
+
+    public function createActivity(array $data)
+    {
+        return AccountActivity::query()->create($data);
     }
 
     public function update(Transaction $transaction, array $data): Transaction

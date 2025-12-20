@@ -10,6 +10,7 @@ interface TransactionRepositoryInterface
     public function find(int $id): ?Transaction;
     public function findOrFail(int $id): Transaction;
     public function create(array $data): Transaction;
+    public function createActivity(array $data);
     public function update(Transaction $transaction, array $data): Transaction;
     public function all(): Collection;
 }

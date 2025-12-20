@@ -55,14 +55,7 @@ class TransactionService
 
             $this->audit->auditCompleted($transaction);
 
-//            AccountActivity::query()->create([
-//                'account_id'      => $account->id,
-//                'user_id'         => Auth::id(),
-//                'type'            => AccountActivityTypeEnum::BALANCE_CHANGE->value,
-//                'amount'          => $data->amount,
-//                'balance_before' => $account->getOriginal('balance'),
-//                'balance_after'  => $account->balance,
-//            ]);
+            $this->createActivity($account,$data);
 
             return $transaction;
         });
@@ -134,7 +127,6 @@ class TransactionService
     }
 
 
-
     public function approve(Transaction $transaction): Transaction
     {
         return DB::transaction(function () use ($transaction) {
@@ -162,14 +154,7 @@ class TransactionService
 
             $this->audit->auditApproved($transaction);
 
-//            AccountActivity::query()->create([
-//                'account_id'      => $account->id,
-//                'user_id'         => Auth::id(),
-//                'type'            => AccountActivityTypeEnum::BALANCE_CHANGE->value,
-//                'amount'          => $data->amount,
-//                'balance_before' => $account->getOriginal('balance'),
-//                'balance_after'  => $account->balance,
-//            ]);
+            $this->createActivity($account,$data);
 
             return $transaction->refresh();
         });
@@ -190,8 +175,19 @@ class TransactionService
 
         $this->audit->auditRejected($transaction,$reason);
 
-
         return $transaction->refresh();
+    }
+
+    public function createActivity(Account $account,TransactionCreateData $data): void
+    {
+        $this->transactions->createActivity([
+                'account_id'      => $account->id,
+                'user_id'         => Auth::id(),
+                'type'            => AccountActivityTypeEnum::BALANCE_CHANGE->value,
+                'amount'          => $data->amount,
+                'balance_before' => $account->getOriginal('balance'),
+                'balance_after'  => $account->balance,
+        ]);
     }
 
 
