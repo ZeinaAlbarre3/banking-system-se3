@@ -4,6 +4,8 @@ namespace App\Domains\Transaction\Services;
 
 use App\Domains\Account\Models\Account;
 use App\Domains\Account\Repositories\AccountRepositoryInterface;
+use App\Domains\Notification\Enums\AccountActivityTypeEnum;
+use App\Domains\Notification\Models\AccountActivity;
 use App\Domains\Transaction\Approval\TransactionApprovalChainFactory;
 use App\Domains\Transaction\Data\TransactionApprovalData;
 use App\Domains\Transaction\Data\TransactionCreateData;
@@ -52,6 +54,15 @@ class TransactionService
             $this->markCompleted($transaction);
 
             $this->audit->auditCompleted($transaction);
+
+//            AccountActivity::query()->create([
+//                'account_id'      => $account->id,
+//                'user_id'         => Auth::id(),
+//                'type'            => AccountActivityTypeEnum::BALANCE_CHANGE->value,
+//                'amount'          => $data->amount,
+//                'balance_before' => $account->getOriginal('balance'),
+//                'balance_after'  => $account->balance,
+//            ]);
 
             return $transaction;
         });
@@ -151,6 +162,15 @@ class TransactionService
 
             $this->audit->auditApproved($transaction);
 
+//            AccountActivity::query()->create([
+//                'account_id'      => $account->id,
+//                'user_id'         => Auth::id(),
+//                'type'            => AccountActivityTypeEnum::BALANCE_CHANGE->value,
+//                'amount'          => $data->amount,
+//                'balance_before' => $account->getOriginal('balance'),
+//                'balance_after'  => $account->balance,
+//            ]);
+
             return $transaction->refresh();
         });
     }
@@ -169,6 +189,7 @@ class TransactionService
         ]);
 
         $this->audit->auditRejected($transaction,$reason);
+
 
         return $transaction->refresh();
     }

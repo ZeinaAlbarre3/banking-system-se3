@@ -2,6 +2,7 @@
 
 use App\Domains\Account\AccountServiceProvider;
 use App\Domains\Auth\AuthServiceProvider;
+use App\Domains\Dashboard\DashboardServiceProvider;
 use App\Domains\Notification\NotificationServiceProvider;
 use App\Domains\Transaction\TransactionServiceProvider;
 use App\Exceptions\ExceptionHandler;
@@ -30,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         AuthServiceProvider::class,
         AccountServiceProvider::class,
         TransactionServiceProvider::class,
-        NotificationServiceProvider::class
+        NotificationServiceProvider::class,
+        DashboardServiceProvider::class
     ])
     ->create();
