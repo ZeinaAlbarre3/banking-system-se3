@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Account\Strategy;
+namespace App\Domains\Account\Strategies;
 
 use App\Domains\Account\Enums\AccountTypeEnum;
 

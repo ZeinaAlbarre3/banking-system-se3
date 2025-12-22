@@ -5,7 +5,7 @@ namespace App\Domains\Account\Services;
 use App\Domains\Account\Data\InterestData;
 use App\Domains\Account\Data\InterestResultData;
 use App\Domains\Account\Models\Account;
-use App\Domains\Account\Strategy\InterestStrategyFactory;
+use App\Domains\Account\Strategies\InterestStrategyFactory;
 
 class InterestService
 {
@@ -24,9 +24,9 @@ class InterestService
         return new InterestResultData(
             account_reference: $account->reference_number,
             type: $account->type->value,
-            market_rate: (float)$data->market_rate,
-            days: (int)$data->days,
-            interest: (float)$interest,
+            market_rate: $data->market_rate,
+            days: $data->days,
+            interest: $interest,
         );
     }
 }

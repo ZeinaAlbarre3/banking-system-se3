@@ -2,10 +2,10 @@
 
 use App\Domains\Account\Data\InterestData;
 use App\Domains\Account\Models\Account;
-use App\Domains\Account\Strategy\CurrentInterestStrategy;
-use App\Domains\Account\Strategy\InvestmentInterestStrategy;
-use App\Domains\Account\Strategy\LoanInterestStrategy;
-use App\Domains\Account\Strategy\SavingInterestStrategy;
+use App\Domains\Account\Strategies\CurrentInterestStrategy;
+use App\Domains\Account\Strategies\InvestmentInterestStrategy;
+use App\Domains\Account\Strategies\LoanInterestStrategy;
+use App\Domains\Account\Strategies\SavingInterestStrategy;
 
 
 it('saving strategy calculates interest correctly', function () {
