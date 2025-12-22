@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domains\Transaction\Repositories;
+namespace App\Domains\Transaction\Repositories\Transaction;
 
 use App\Domains\Notification\Models\AccountActivity;
 use App\Domains\Transaction\Models\Transaction;

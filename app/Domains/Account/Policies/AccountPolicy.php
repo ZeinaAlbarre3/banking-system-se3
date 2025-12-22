@@ -22,4 +22,9 @@ class AccountPolicy
 
         return false;
     }
+
+    public function update(User $user, Account $account): bool
+    {
+        return (int) $account->user_id === (int) $user->id;
+    }
 }

@@ -10,7 +10,7 @@ use App\Domains\Transaction\Exceptions\TransactionRuleException;
 
 class EnsureSameOwnerForTransferChain extends AbstractTransactionChain
 {
-    public function process(Account $account, TransactionCreateData $data, ?Account $relatedAccount = null): void
+    public function process(Account $account, $data, ?Account $relatedAccount = null): void
     {
         if ($data->type !== TransactionTypeEnum::TRANSFER || ! $relatedAccount) {
             return;

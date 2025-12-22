@@ -15,7 +15,7 @@ abstract class AbstractTransactionChain implements TransactionChain
         return $next ?? $this;
     }
 
-    public function handle(Account $account, TransactionCreateData $data, ?Account $relatedAccount = null): void
+    public function handle(Account $account, $data, ?Account $relatedAccount = null): void
     {
         $this->process($account, $data, $relatedAccount);
 
@@ -24,5 +24,5 @@ abstract class AbstractTransactionChain implements TransactionChain
         }
     }
 
-    abstract public function process(Account $account, TransactionCreateData $data, ?Account $relatedAccount = null): void;
+    abstract public function process(Account $account, $data, ?Account $relatedAccount = null): void;
 }

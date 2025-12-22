@@ -5,17 +5,16 @@ namespace App\Domains\Transaction\Services;
 use App\Domains\Account\Models\Account;
 use App\Domains\Account\Repositories\AccountRepositoryInterface;
 use App\Domains\Notification\Enums\AccountActivityTypeEnum;
-use App\Domains\Notification\Models\AccountActivity;
 use App\Domains\Transaction\Approval\TransactionApprovalChainFactory;
+use App\Domains\Transaction\Chains\TransactionValidationChainFactory;
 use App\Domains\Transaction\Data\TransactionApprovalData;
 use App\Domains\Transaction\Data\TransactionCreateData;
 use App\Domains\Transaction\Enums\TransactionStatusEnum;
 use App\Domains\Transaction\Enums\TransactionTypeEnum;
-use App\Domains\Transaction\Exceptions\TransactionRuleException;
+use App\Domains\Transaction\Models\ScheduledTransaction;
 use App\Domains\Transaction\Models\Transaction;
-use App\Domains\Transaction\Repositories\TransactionRepositoryInterface;
+use App\Domains\Transaction\Repositories\Transaction\TransactionRepositoryInterface;
 use App\Domains\Transaction\Strategies\TransactionStrategyFactory;
-use App\Domains\Transaction\Chains\TransactionValidationChainFactory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -28,13 +27,14 @@ class TransactionService
         private readonly TransactionValidationChainFactory $validationChainFactory,
         private readonly TransactionApprovalChainFactory   $approvalChainFactory,
         private readonly AuditLoggerService                $audit,
+        private readonly TransactionSharedService          $sharedService,
     ) {}
 
     public function create(TransactionCreateData $data): Transaction
     {
-        [$account, $related] = $this->resolveAccounts($data);
+        [$account, $related] = $this->sharedService->resolveAccounts($data);
 
-        $this->validate($account, $data, $related);
+        $this->sharedService->validate($account, $data, $related);
 
         return DB::transaction(function () use ($account, $related, $data) {
 
@@ -59,6 +59,23 @@ class TransactionService
 
             return $transaction;
         });
+    }
+
+    public function createFromScheduled(ScheduledTransaction $scheduled): void
+    {
+        $data = new TransactionCreateData(
+            type: $scheduled->type,
+            account_reference: $scheduled->account->reference_number,
+            amount: (float) $scheduled->amount,
+            related_account_reference: $scheduled->relatedAccount?->reference_number,
+            currency: $scheduled->currency,
+            metadata: array_merge(
+                $scheduled->metadata ?? [],
+                ['scheduled_id' => $scheduled->id]
+            )
+        );
+
+        $this->create($data);
     }
 
     private function resolveAccounts(TransactionCreateData $data): array

@@ -6,19 +6,20 @@ use App\Domains\Account\Models\Account;
 use App\Domains\Transaction\Data\TransactionCreateData;
 use App\Domains\Transaction\Enums\TransactionTypeEnum;
 use App\Domains\Transaction\Exceptions\TransactionRuleException;
+use Illuminate\Support\Facades\Auth;
 
-class EnsureRelatedAccountProvidedForTransferChain extends AbstractTransactionChain
+class EnsureAccountOwnedByUser extends AbstractTransactionChain
 {
     public function process(Account $account, $data, ?Account $relatedAccount = null): void
     {
-        if ($data->type !== TransactionTypeEnum::TRANSFER) {
+        $user = Auth::user();
+
+        if ($user && $user->hasRole(['admin', 'manager' , 'staff'])) {
             return;
         }
 
-        if (! $relatedAccount) {
-            throw new TransactionRuleException(
-                'Related account is required for transfer.'
-            );
+        if (! $user || (int)$account->user_id !== (int)$user->id) {
+            throw new TransactionRuleException('You can only perform transactions on your own accounts.');
         }
     }
 }

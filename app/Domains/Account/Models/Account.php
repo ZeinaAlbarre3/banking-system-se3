@@ -6,6 +6,7 @@ use App\Domains\Account\Enums\AccountStateEnum;
 use App\Domains\Account\Enums\AccountTypeEnum;
 use App\Domains\Account\ValueObjects\Money;
 use App\Domains\Auth\Models\User;
+use App\Domains\Transaction\Models\ScheduledTransaction;
 use App\Domains\Transaction\Models\Transaction;
 use App\Traits\HasUniqueCode;
 use Database\Factories\AccountFactory;
@@ -83,6 +84,16 @@ class Account extends Model
     public function incomingTransactions(): HasMany
     {
         return $this->hasMany(Transaction::class, 'related_account_id');
+    }
+
+    public function scheduleTransactions(): HasMany
+    {
+        return $this->hasMany(ScheduledTransaction::class);
+    }
+
+    public function incomingScheduleTransactions(): HasMany
+    {
+        return $this->hasMany(ScheduledTransaction::class,'related_account_id');
     }
 
     public function allTransactions()

@@ -27,6 +27,11 @@ class PermissionSeeder extends Seeder
             'view-transaction',
             'approve-transaction',
             'reject-transaction',
+            'view-my-scheduled-transactions',
+            'create-scheduled-transaction',
+            'view-my-scheduled-transactions',
+            'update-scheduled-transaction',
+            'delete-scheduled-transaction',
         ];
 
         $totalPermissionsCount = count($permissions);

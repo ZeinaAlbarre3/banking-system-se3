@@ -47,7 +47,12 @@ class RolePermissionAssignerSeeder extends Seeder
                 'view-account',
                 'create-transaction',
                 'view-transactions',
-                'view-transaction'
+                'view-transaction',
+                'view-my-scheduled-transactions',
+                'create-scheduled-transaction',
+                'view-my-scheduled-transactions',
+                'update-scheduled-transaction',
+                'delete-scheduled-transaction',
             ],
             'staff' => [
                 'login',

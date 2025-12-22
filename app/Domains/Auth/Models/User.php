@@ -4,6 +4,7 @@ namespace App\Domains\Auth\Models;
 
 use App\Domains\Account\Models\Account;
 use App\Domains\Transaction\Models\AuditLog;
+use App\Domains\Transaction\Models\ScheduledTransaction;
 use App\Traits\HasUniqueCode;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -71,6 +72,12 @@ class User extends Authenticatable
         return $this->hasMany(AuditLog::class, 'actor_id');
     }
 
+    public function scheduleTransactions(): HasMany
+    {
+        return $this->hasMany(ScheduledTransaction::class);
+    }
+
+
     public function auditableLogs(): MorphMany
     {
         return $this->morphMany(AuditLog::class, 'auditable');
@@ -95,5 +102,6 @@ class User extends Authenticatable
     {
         return 'reference_number';
     }
+
 
 }

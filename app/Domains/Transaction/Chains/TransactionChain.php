@@ -9,5 +9,5 @@ interface TransactionChain
 {
     public function setNext(?TransactionChain $next): TransactionChain;
 
-    public function handle(Account $account, TransactionCreateData $data, ?Account $relatedAccount = null): void;
+    public function handle(Account $account, $data, ?Account $relatedAccount = null): void;
 }

@@ -29,14 +29,14 @@ class AccountController extends Controller
         private readonly InterestService $interestService
     ) {}
 
-    public function index(Request $request): JsonResponse
+    public function index(): JsonResponse
     {
         $accounts = Account::all();
 
         return self::Success(data: AccountResource::collection($accounts));
     }
 
-    public function myAccounts(Request $request): JsonResponse
+    public function myAccounts(): JsonResponse
     {
         $accounts = $this->service->getMyAccounts();
 
@@ -52,7 +52,7 @@ class AccountController extends Controller
         return self::Success(new AccountResource($account),msg:'Account has been created successfully');
     }
 
-    public function show(Request $request, Account $account): JsonResponse
+    public function show(Account $account): JsonResponse
     {
         Gate::authorize('view', $account);
 
@@ -62,7 +62,7 @@ class AccountController extends Controller
 
     public function update(UpdateAccountRequest $request, Account $account): JsonResponse
     {
-        //policy (memento)
+        Gate::authorize('update', $account);
 
         $data = AccountUpdateData::from($request->validated());
 
@@ -73,7 +73,7 @@ class AccountController extends Controller
 
     public function changeState(ChangeAccountStateRequest $request, Account $account): JsonResponse
     {
-        //policy (memento)
+        Gate::authorize('update', $account);
 
         $data = AccountStateChangeData::from($request->validated());
 
@@ -82,10 +82,8 @@ class AccountController extends Controller
         return self::Success(new AccountResource($account),msg:'Account state has been updated successfully');
     }
 
-    public function portfolioBalance(Request $request): JsonResponse
+    public function portfolioBalance(): JsonResponse
     {
-        //policy (memento)
-
         $balance = $this->service->getUserPortfolioBalance(Auth::user());
 
         return self::Success(new AccountPortfolioBalanceResource($balance));

@@ -8,14 +8,16 @@ class TransactionValidationChainFactory
         private readonly EnsureRelatedAccountProvidedForTransferChain $forTransfer,
         private readonly EnsureSameOwnerForTransferChain $sameOwner,
         private readonly EnsureSufficientBalanceChain $balance,
+        private readonly EnsureAccountOwnedByUser $accountOwnedByUser,
     ) {}
 
     public function make(): TransactionChain
     {
-        $this->forTransfer
+        $this->accountOwnedByUser
+            ->setNext($this->forTransfer)
             ->setNext($this->sameOwner)
             ->setNext($this->balance);
 
-        return $this->forTransfer;
+        return $this->accountOwnedByUser;
     }
 }

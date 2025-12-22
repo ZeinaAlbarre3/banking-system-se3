@@ -1,13 +1,24 @@
 <?php
 
+use App\Domains\Transaction\Http\Controllers\ScheduledTransactionController;
 use App\Domains\Transaction\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::post('/', [TransactionController::class, 'store'])->middleware('permission:create-transaction');
-    Route::get('/', [TransactionController::class, 'index']);//->middleware('permission:view-transactions');
-    Route::get('/{transaction}', [TransactionController::class, 'show']);//->middleware('permission:view-transaction');
-    Route::patch('/{transaction}/approve', [TransactionController::class, 'approve'])->middleware('permission:approve-transaction');
-    Route::patch('/{transaction}/reject', [TransactionController::class, 'reject'])->middleware('permission:reject-transaction');
+    Route::prefix('scheduled-transactions')->group(function () {
+        Route::get('/', [ScheduledTransactionController::class, 'index']);
+        Route::post('/', [ScheduledTransactionController::class, 'store']);
+        Route::get('/{scheduledTransaction}', [ScheduledTransactionController::class, 'show']);
+        Route::patch('/{scheduledTransaction}/toggle', [ScheduledTransactionController::class, 'toggle']);
+        Route::delete('/{scheduledTransaction}', [ScheduledTransactionController::class, 'destroy']);
+    });
+
+    Route::prefix('transactions')->group(function () {
+        Route::post('/', [TransactionController::class, 'store']);
+        Route::get('/', [TransactionController::class, 'index']);
+        Route::get('/{transaction}', [TransactionController::class, 'show']);
+        Route::post('/{transaction}/approve', [TransactionController::class, 'approve']);
+        Route::post('/{transaction}/reject', [TransactionController::class, 'reject']);
+    });
 });

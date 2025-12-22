@@ -6,8 +6,6 @@ namespace App\Domains\Transaction\Strategies;
 use App\Domains\Account\Models\Account;
 use App\Domains\Account\Services\AccountService;
 use App\Domains\Transaction\Data\TransactionCreateData;
-use App\Domains\Transaction\Enums\TransactionStatusEnum;
-use App\Domains\Transaction\Repositories\TransactionRepositoryInterface;
 
 class WithdrawStrategy implements TransactionStrategy
 {
