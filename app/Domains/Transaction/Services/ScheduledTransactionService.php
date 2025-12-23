@@ -10,6 +10,7 @@ use App\Domains\Transaction\Data\TransactionCreateData;
 use App\Domains\Transaction\Enums\ScheduleStatusEnum as SCH;
 use App\Domains\Transaction\Models\ScheduledTransaction;
 use App\Domains\Transaction\Repositories\TransactionSchedule\ScheduledTransactionRepositoryInterface;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,7 +18,6 @@ class ScheduledTransactionService
 {
     public function __construct(
         private readonly ScheduledTransactionRepositoryInterface $scheduledTransaction,
-        private readonly TransactionValidationChainFactory $validationChainFactory,
         private readonly TransactionSharedService $sharedService,
     ) {}
 
@@ -45,9 +45,10 @@ class ScheduledTransactionService
             'day_of_month' => $data->day_of_month,
             'time_of_day' => $data->time_of_day,
             'timezone' => $data->timezone,
-            'next_run_at' => now(),
+            'next_run_at' => $this->calculateFirstRun($data),
         ]);
     }
+
 
     public function listMySchedules(): Collection
     {
@@ -56,8 +57,6 @@ class ScheduledTransactionService
 
     public function changeStatus(ScheduledTransaction $scheduled): ScheduledTransaction
     {
-        $this->ensureOwner($scheduled);
-
         $newStatus = $scheduled->status === SCH::ACTIVE->value
             ? SCH::PAUSED->value
             : SCH::ACTIVE->value;
@@ -69,20 +68,89 @@ class ScheduledTransactionService
 
     public function delete(ScheduledTransaction $scheduled): void
     {
-        $this->ensureOwner($scheduled);
-
         $this->scheduledTransaction->delete($scheduled);
     }
 
-    private function ensureOwner(ScheduledTransaction $scheduled): void
+    private function calculateFirstRun(ScheduledTransactionCreateData $data): Carbon
     {
-        if ((int) $scheduled->user_id !== (int) Auth::id()) {
-            abort(403, 'Authorization failed.');
-        }
+        $tz = $data->timezone ?? config('app.timezone', 'UTC');
+
+        $now = now($tz);
+
+        [$hour, $minute] = array_map(
+            'intval',
+            explode(':', $data->time_of_day ?? '09:00')
+        );
+
+        return match ($data->frequency) {
+
+            'daily' => $this->firstDailyRun($now, $hour, $minute),
+
+            'weekly' => $this->firstWeeklyRun(
+                $now,
+                $data->day_of_week,
+                $hour,
+                $minute
+            ),
+
+            'monthly' => $this->firstMonthlyRun(
+                $now,
+                $data->day_of_month,
+                $hour,
+                $minute
+            ),
+
+            default => $now->copy()->addDay()->setTime($hour, $minute)->startOfMinute(),
+        };
     }
 
-    private function validate(Account $account, TransactionCreateData $data, ?Account $related): void
+    private function firstDailyRun(Carbon $now, int $hour, int $minute): Carbon
     {
-        $this->validationChainFactory->make()->handle($account, $data, $related);
+        $candidate = $now->copy()
+            ->setTime($hour, $minute)
+            ->startOfMinute();
+
+        if ($candidate->lessThanOrEqualTo($now)) {
+            $candidate->addDay();
+        }
+
+        return $candidate;
     }
+
+    private function firstWeeklyRun(Carbon $now, ?int $dayOfWeek, int $hour, int $minute): Carbon
+    {
+        $targetDay = $dayOfWeek ?? $now->dayOfWeekIso;
+
+        $candidate = $now->copy()
+            ->setISODate(
+                $now->year,
+                $now->weekOfYear,
+                $targetDay
+            )
+            ->setTime($hour, $minute)
+            ->startOfMinute();
+
+        if ($candidate->lessThanOrEqualTo($now)) {
+            $candidate->addWeek();
+        }
+
+        return $candidate;
+    }
+
+    private function firstMonthlyRun(Carbon $now, ?int $dayOfMonth, int $hour, int $minute): Carbon
+    {
+        $day = max(1, min(28, (int) ($dayOfMonth ?? $now->day)));
+
+        $candidate = $now->copy()
+            ->day($day)
+            ->setTime($hour, $minute)
+            ->startOfMinute();
+
+        if ($candidate->lessThanOrEqualTo($now)) {
+            $candidate->addMonth()->day($day);
+        }
+
+        return $candidate;
+    }
+
 }

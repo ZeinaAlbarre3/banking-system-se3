@@ -68,7 +68,7 @@ it('creates pending transaction when amount requires approval', function () {
 
 it('admin can approve pending transaction and apply balance changes', function () {
     $admin = User::factory()->create();
-    givePermissions($admin, ['approve-transaction']);
+   // givePermissions($admin, ['approve-transaction']);
 
     $account = Account::factory()->create([
         'balance' => 3000,
@@ -77,7 +77,7 @@ it('admin can approve pending transaction and apply balance changes', function (
     $transaction = Transaction::factory()->create([
         'account_id' => $account->id,
         'type' => TransactionTypeEnum::WITHDRAW->value,
-        'amount' => 1000,
+        'amount' => 2000,
         'status' => TransactionStatusEnum::PENDING->value,
     ]);
 
@@ -89,7 +89,7 @@ it('admin can approve pending transaction and apply balance changes', function (
     $account->refresh();
 
     expect($transaction->status)->toBe(TransactionStatusEnum::APPROVED->value)
-        ->and((float)$account->balance)->toBe(2000.0);
+        ->and((float)$account->balance)->toBe(1000.0);
 });
 
 it('admin can reject transaction without changing balance', function () {

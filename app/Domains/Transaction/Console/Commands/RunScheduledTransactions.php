@@ -38,7 +38,7 @@ class RunScheduledTransactions extends Command
         foreach ($items as $scheduled) {
             DB::transaction(function () use ($scheduled, $transactions) {
                 try {
-                    $transactions->createFromScheduled($scheduled);
+                    $transactions->createTransactionFromScheduled($scheduled);
 
                     $scheduled->update([
                         'last_run_at' => now(),
@@ -55,12 +55,61 @@ class RunScheduledTransactions extends Command
         }
     }
 
-    private function calculateNextRun(ScheduledTransaction $s): \Carbon\Carbon
+    public function calculateNextRun(ScheduledTransaction $s): \Carbon\Carbon
     {
+        $tz = $s->timezone ?: config('app.timezone', 'UTC');
+
+        $now = now($tz);
+
+        [$hour, $minute] = array_map('intval', explode(':', $s->time_of_day ?? '09:00'));
+
         return match ($s->frequency) {
-            'daily' => now()->addDay(),
-            'weekly' => now()->addWeek(),
-            'monthly' => now()->addMonth(),
+
+            'daily' => $now
+                ->copy()
+                ->setTime($hour, $minute)
+                ->addDay()
+                ->startOfMinute(),
+
+            'weekly' => $this->nextWeeklyRun($now, $s->day_of_week, $hour, $minute),
+
+            'monthly' => $this->nextMonthlyRun($now, $s->day_of_month, $hour, $minute),
+
+            default => $now->copy()->addDay()->setTime($hour, $minute)->startOfMinute(),
         };
     }
+
+    private function nextWeeklyRun(\Carbon\Carbon $now, ?int $dayOfWeek, int $hour, int $minute): \Carbon\Carbon
+    {
+        $target = $dayOfWeek ?? $now->dayOfWeekIso; // 1..7
+
+        $candidate = $now->copy()
+            ->setISODate($now->year, $now->weekOfYear, $target)
+            ->setTime($hour, $minute)
+            ->startOfMinute();
+
+        if ($candidate->lessThanOrEqualTo($now)) {
+            $candidate->addWeek();
+        }
+
+        return $candidate;
+    }
+
+    private function nextMonthlyRun(\Carbon\Carbon $now, ?int $dayOfMonth, int $hour, int $minute): \Carbon\Carbon
+    {
+        $day = max(1, min(28, (int) ($dayOfMonth ?? $now->day))); // لتفادي 29-31 مشاكل
+
+        $candidate = $now->copy()
+            ->day($day)
+            ->setTime($hour, $minute)
+            ->startOfMinute();
+
+        if ($candidate->lessThanOrEqualTo($now)) {
+            $candidate->addMonth()->day($day);
+        }
+
+        return $candidate;
+    }
+
+
 }

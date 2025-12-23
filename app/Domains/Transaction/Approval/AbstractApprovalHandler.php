@@ -3,6 +3,7 @@
 namespace App\Domains\Transaction\Approval;
 
 use App\Domains\Transaction\Data\TransactionApprovalData;
+use App\Domains\Transaction\Enums\TransactionStatusEnum;
 
 abstract class AbstractApprovalHandler implements ApprovalHandler
 {
@@ -16,6 +17,12 @@ abstract class AbstractApprovalHandler implements ApprovalHandler
 
     public function handle(TransactionApprovalData $data): void
     {
+        if (in_array($data->transaction->status, [
+            TransactionStatusEnum::COMPLETED->value,
+        ], true)) {
+            return;
+        }
+
         $this->process($data);
 
         if ($this->next) {

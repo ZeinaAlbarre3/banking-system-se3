@@ -23,6 +23,7 @@ class RolePermissionAssignerSeeder extends Seeder
                 'update-account',
                 'view-account',
                 'view-accounts',
+                'view-scheduled-transactions',
                 'approve-transaction',
                 'reject-transaction',
             ],
@@ -33,6 +34,7 @@ class RolePermissionAssignerSeeder extends Seeder
                 'update-account',
                 'view-account',
                 'view-accounts',
+                'view-scheduled-transactions',
                 'approve-transaction',
                 'reject-transaction',
             ],
@@ -50,7 +52,7 @@ class RolePermissionAssignerSeeder extends Seeder
                 'view-transaction',
                 'view-my-scheduled-transactions',
                 'create-scheduled-transaction',
-                'view-my-scheduled-transactions',
+                'view-scheduled-transactions',
                 'update-scheduled-transaction',
                 'delete-scheduled-transaction',
             ],
@@ -61,6 +63,7 @@ class RolePermissionAssignerSeeder extends Seeder
                 'update-account',
                 'view-account',
                 'view-accounts',
+                'view-scheduled-transactions',
             ],
 
         ];

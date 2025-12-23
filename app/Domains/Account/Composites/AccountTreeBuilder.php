@@ -8,7 +8,6 @@ use Illuminate\Support\Collection;
 class AccountTreeBuilder
 {
     /**
-     * يبني شجرة حسابات لمستخدم معيّن
      *
      * @param Collection<int, Account> $accounts
      * @return AccountGroup
@@ -30,7 +29,6 @@ class AccountTreeBuilder
     }
 
     /**
-     * يبني Component (Leaf أو Group) لحساب معيّن
      *
      * @param Account $account
      * @param Collection<int, Collection<int, Account>> $byParent

@@ -21,10 +21,8 @@ use Illuminate\Support\Facades\DB;
 class TransactionService
 {
     public function __construct(
-        private readonly AccountRepositoryInterface        $accounts,
         private readonly TransactionRepositoryInterface    $transactions,
         private readonly TransactionStrategyFactory        $strategyFactory,
-        private readonly TransactionValidationChainFactory $validationChainFactory,
         private readonly TransactionApprovalChainFactory   $approvalChainFactory,
         private readonly AuditLoggerService                $audit,
         private readonly TransactionSharedService          $sharedService,
@@ -61,7 +59,7 @@ class TransactionService
         });
     }
 
-    public function createFromScheduled(ScheduledTransaction $scheduled): void
+    public function createTransactionFromScheduled(ScheduledTransaction $scheduled): void
     {
         $data = new TransactionCreateData(
             type: $scheduled->type,
@@ -76,23 +74,6 @@ class TransactionService
         );
 
         $this->create($data);
-    }
-
-    private function resolveAccounts(TransactionCreateData $data): array
-    {
-        $account = $this->accounts->findByReferenceOrFail($data->account_reference);
-
-        $related = null;
-        if ($data->related_account_reference !== null) {
-            $related = $this->accounts->findByReferenceOrFail($data->related_account_reference);
-        }
-
-        return [$account, $related];
-    }
-
-    private function validate(Account $account, TransactionCreateData $data, ?Account $related): void
-    {
-        $this->validationChainFactory->make()->handle($account, $data, $related);
     }
 
     private function createPendingTransaction(Account $account, ?Account $related, TransactionCreateData $data): Transaction
@@ -148,8 +129,8 @@ class TransactionService
     {
         return DB::transaction(function () use ($transaction) {
 
-            $account = $transaction->account; // relationship
-            $related = $transaction->relatedAccount; // relationship nullable
+            $account = $transaction->account;
+            $related = $transaction->relatedAccount;
 
             $data = TransactionCreateData::from([
                 'type' => TransactionTypeEnum::from($transaction->type),
@@ -184,17 +165,21 @@ class TransactionService
             $meta['rejection_reason'] = $reason;
         }
 
-        $this->transactions->update($transaction, [
-            'status'      => TransactionStatusEnum::REJECTED->value,
-            'approved_by' => Auth::id(),
-            'metadata'    => $meta,
-        ]);
+        $this->updateTransaction($transaction, $meta);
 
         $this->audit->auditRejected($transaction,$reason);
 
         return $transaction->refresh();
     }
 
+    public function updateTransaction($transaction,$meta): Transaction
+    {
+        return $this->transactions->update($transaction, [
+            'status'      => TransactionStatusEnum::REJECTED->value,
+            'approved_by' => Auth::id(),
+            'metadata'    => $meta,
+        ]);
+    }
     public function createActivity(Account $account,TransactionCreateData $data): void
     {
         $this->transactions->createActivity([

@@ -8,7 +8,7 @@ use App\Domains\Transaction\Enums\TransactionStatusEnum;
 class AutoApproveSmallTransaction extends AbstractApprovalHandler
 {
     public function __construct(
-        private readonly float $threshold = 100.00
+        private readonly float $threshold = 1000.00
     ) {}
 
     protected function process(TransactionApprovalData $data): void

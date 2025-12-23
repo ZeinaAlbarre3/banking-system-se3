@@ -28,8 +28,8 @@ class PermissionSeeder extends Seeder
             'approve-transaction',
             'reject-transaction',
             'view-my-scheduled-transactions',
+            'view-scheduled-transactions',
             'create-scheduled-transaction',
-            'view-my-scheduled-transactions',
             'update-scheduled-transaction',
             'delete-scheduled-transaction',
         ];

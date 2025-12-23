@@ -28,6 +28,7 @@ class AccountActivityController extends Controller
     {
         $data = AccountActivityCreateData::from(
             array_merge(
+
                 $request->validated(),
                 ['user_reference' => auth()->id()]
             ));

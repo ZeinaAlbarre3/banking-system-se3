@@ -14,9 +14,4 @@ class AccountLeaf implements AccountComponent
     {
         return (float) $this->account->balance;
     }
-
-    public function getModel(): Account
-    {
-        return $this->account;
-    }
 }

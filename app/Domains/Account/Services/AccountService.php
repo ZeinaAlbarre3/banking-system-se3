@@ -144,14 +144,4 @@ class AccountService
             throw new AccountStateException($errorMessage);
         }
     }
-
-
-    private function getParentIfProvided(?int $parentId): ?Account
-    {
-        if ($parentId === null) {
-            return null;
-        }
-
-        return $this->accounts->findOrFail($parentId);
-    }
 }
