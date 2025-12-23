@@ -34,6 +34,7 @@ class Account extends Model
     protected $casts = [
         'metadata' => 'array',
         'balance'  => 'decimal:2',
+        'type' => AccountTypeEnum::class,
     ];
 
     protected static function newFactory()

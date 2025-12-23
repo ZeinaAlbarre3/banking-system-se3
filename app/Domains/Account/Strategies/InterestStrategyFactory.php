@@ -13,7 +13,7 @@ class InterestStrategyFactory
         private readonly LoanInterestStrategy       $loan,
     ) {}
 
-    public function forType(AccountTypeEnum $type): InterestStrategy
+    public function forType(AccountTypeEnum $type)
     {
         return match ($type) {
             AccountTypeEnum::SAVING => $this->saving,

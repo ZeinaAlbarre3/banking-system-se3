@@ -8,16 +8,15 @@ use App\Domains\Notification\Enums\AccountActivityTypeEnum;
 
 class AccountActivityObserver
 {
-    protected static ?NotificationRepositoryInterface $notificationRepo = null;
+    protected  ?NotificationRepositoryInterface $notificationRepo = null;
 
     public function __construct(NotificationRepositoryInterface $notificationRepo)
     {
-        self::$notificationRepo = $notificationRepo;
+        $this->notificationRepo = $notificationRepo;
     }
 
     public function created(AccountActivity $activity)
     {
-        if (!self::$notificationRepo) return;
 
         $title = $activity->type === AccountActivityTypeEnum::BALANCE_CHANGE->value
             ? 'Balance Updated'
@@ -26,7 +25,7 @@ class AccountActivityObserver
         $body = $activity->type === AccountActivityTypeEnum::LARGE_TRANSACTION->value
             ? 'Your balance was updated.'
             : 'A large transaction occurred.';
-        self::$notificationRepo->create([
+        $this->notificationRepo->create([
             'user_id' => $activity->user_id,
             'type'    => $activity->type,
             'title'   => $title,

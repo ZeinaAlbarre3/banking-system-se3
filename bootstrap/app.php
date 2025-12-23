@@ -4,6 +4,7 @@ use App\Domains\Account\AccountServiceProvider;
 use App\Domains\Auth\AuthServiceProvider;
 use App\Domains\Dashboard\DashboardServiceProvider;
 use App\Domains\Notification\NotificationServiceProvider;
+use App\Domains\Report\ReportServiceProvider;
 use App\Domains\Transaction\TransactionServiceProvider;
 use App\Exceptions\ExceptionHandler;
 use Illuminate\Foundation\Application;
@@ -32,6 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
         AccountServiceProvider::class,
         TransactionServiceProvider::class,
         NotificationServiceProvider::class,
-        DashboardServiceProvider::class
+        DashboardServiceProvider::class,
+        ReportServiceProvider::class
     ])
     ->create();
