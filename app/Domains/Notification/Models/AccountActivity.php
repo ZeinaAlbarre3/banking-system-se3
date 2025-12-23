@@ -4,6 +4,7 @@ namespace App\Domains\Notification\Models;
 
 use App\Domains\Account\Models\Account;
 use App\Domains\Auth\Models\User;
+use App\Domains\Notification\Observers\AccountActivityObserver;
 use App\Traits\HasUniqueCode;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,6 +33,11 @@ class AccountActivity extends Model
         'balance_before' => 'decimal:2',
         'balance_after' => 'decimal:2',
     ];
+
+    protected static function booted(): void
+    {
+        static::observe(AccountActivityObserver::class);
+    }
 
     public function user(): BelongsTo
     {
