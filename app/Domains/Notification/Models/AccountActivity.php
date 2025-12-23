@@ -6,6 +6,7 @@ use App\Domains\Account\Models\Account;
 use App\Domains\Auth\Models\User;
 use App\Domains\Notification\Observers\AccountActivityObserver;
 use App\Traits\HasUniqueCode;
+use Database\Factories\AccountActivityFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +34,11 @@ class AccountActivity extends Model
         'balance_before' => 'decimal:2',
         'balance_after' => 'decimal:2',
     ];
+
+    protected static function newFactory(): AccountActivityFactory
+    {
+        return AccountActivityFactory::new();
+    }
 
     protected static function booted(): void
     {
